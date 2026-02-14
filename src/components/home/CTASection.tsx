@@ -26,7 +26,7 @@ export function CTASection() {
           </h2>
           <p className="text-secondary-foreground/70 text-lg mb-8">
             Join hundreds of students who have discovered their passion for music
-            at Sangeet Academy. Register today and take the first step towards
+            at Sandy's Stereo. Register today and take the first step towards
             mastering your favorite instrument.
           </p>
 

@@ -12,9 +12,14 @@ export function Footer() {
               <div className="w-10 h-10 rounded-lg bg-gradient-hero flex items-center justify-center">
                 <Music className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="font-serif text-xl font-semibold">
-                Sangeet Academy
-              </span>
+              <div className="flex flex-col leading-none">
+                <span className="font-serif text-xl font-bold text-accent tracking-wide uppercase">
+                  Sandy's Stereo
+                </span>
+                <span className="text-[9px] font-medium text-secondary-foreground/50 tracking-widest uppercase">
+                  Music Institute & Event Management
+                </span>
+              </div>
             </Link>
             <p className="text-secondary-foreground/70 text-sm">
               Where passion meets excellence. Learn music from the best
@@ -93,7 +98,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="mt-12 pt-8 border-t border-secondary-foreground/10">
           <p className="text-center text-secondary-foreground/50 text-sm">
-            © {new Date().getFullYear()} Sangeet Academy. All rights reserved.
+            © {new Date().getFullYear()} Sandy's Stereo. All rights reserved.
           </p>
         </div>
       </div>
