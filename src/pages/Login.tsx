@@ -73,9 +73,14 @@ const Login = () => {
             <div className="w-10 h-10 rounded-lg bg-gradient-hero flex items-center justify-center shadow-soft">
               <Music className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-serif text-xl font-semibold text-foreground">
-              Sangeet Academy
-            </span>
+            <div className="flex flex-col leading-none">
+              <span className="font-serif text-xl font-bold text-accent tracking-wide uppercase">
+                Sandy's Stereo
+              </span>
+              <span className="text-[9px] font-medium text-muted-foreground tracking-widest uppercase">
+                Music Institute & Event Management
+              </span>
+            </div>
           </Link>
 
           <h1 className="font-serif text-3xl font-bold text-foreground mb-2">

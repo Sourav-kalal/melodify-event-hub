@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { MessageCircle, ExternalLink, CreditCard } from "lucide-react";
+import { CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getCourseImage } from "@/lib/courseImages";
+import { EnrollmentFormDialog } from "./EnrollmentFormDialog";
 
 interface CourseCardProps {
   id: string;
@@ -11,9 +12,6 @@ interface CourseCardProps {
   level: string;
   upiPrice?: number;
   imageUrl?: string;
-  whatsappNumber?: string;
-  googleFormLink?: string;
-  globalWhatsappNumber?: string;
   index?: number;
 }
 
@@ -100,32 +98,12 @@ export function CourseCard({
         )}
 
         {/* Actions */}
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-2">
-            <Button
-              variant="whatsapp"
-              size="sm"
-              className="flex-1"
-              onClick={handleWhatsApp}
-            >
-              <MessageCircle className="w-4 h-4" />
-              WhatsApp
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1"
-              onClick={handleJoinNow}
-            >
-              <ExternalLink className="w-4 h-4" />
-              Join Now
-            </Button>
-          </div>
+        <EnrollmentFormDialog courseId={id} courseTitle={title}>
           <Button variant="hero" size="sm" className="w-full">
             <CreditCard className="w-4 h-4" />
             Enroll Now
           </Button>
-        </div>
+        </EnrollmentFormDialog>
       </div>
     </motion.div>
   );

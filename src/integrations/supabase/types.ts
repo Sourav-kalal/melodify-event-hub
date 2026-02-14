@@ -14,6 +14,74 @@ export type Database = {
   }
   public: {
     Tables: {
+      admissions: {
+        Row: {
+          address: string
+          applicant_name: string
+          class_mode: string
+          course_id: string
+          created_at: string
+          date_of_birth: string
+          email: string
+          father_name: string
+          gender: string
+          id: string
+          mother_name: string
+          phone_number: string
+          photo_url: string | null
+          preferred_batch: string | null
+          referral_code: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          address: string
+          applicant_name: string
+          class_mode?: string
+          course_id: string
+          created_at?: string
+          date_of_birth: string
+          email: string
+          father_name: string
+          gender: string
+          id?: string
+          mother_name: string
+          phone_number: string
+          photo_url?: string | null
+          preferred_batch?: string | null
+          referral_code?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: string
+          applicant_name?: string
+          class_mode?: string
+          course_id?: string
+          created_at?: string
+          date_of_birth?: string
+          email?: string
+          father_name?: string
+          gender?: string
+          id?: string
+          mother_name?: string
+          phone_number?: string
+          photo_url?: string | null
+          preferred_batch?: string | null
+          referral_code?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admissions_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       classes: {
         Row: {
           course_id: string
