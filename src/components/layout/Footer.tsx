@@ -81,11 +81,11 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-secondary-foreground/70 text-sm">
                 <Phone className="w-4 h-4 text-accent" />
-                <span>+91 98765 43210</span>
+                <span>+91 86600 46713</span>
               </li>
               <li className="flex items-center gap-2 text-secondary-foreground/70 text-sm">
                 <Mail className="w-4 h-4 text-accent" />
-                <span>info@sangeetacademy.com</span>
+                <span>info@sandysstereo.com</span>
               </li>
               <li className="flex items-start gap-2 text-secondary-foreground/70 text-sm">
                 <MapPin className="w-4 h-4 text-accent mt-0.5" />

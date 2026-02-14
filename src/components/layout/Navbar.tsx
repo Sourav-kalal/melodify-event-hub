@@ -1,8 +1,15 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Music } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, Music, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -13,6 +20,21 @@ const navLinks = [
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, role, isLoading, signOut } = useAuth();
+
+  const getDashboardPath = () => {
+    switch (role) {
+      case "admin": return "/admin";
+      case "instructor": return "/instructor";
+      default: return "/student";
+    }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -56,12 +78,34 @@ export function Navbar() {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" asChild>
-              <Link to="/login">Login</Link>
-            </Button>
-            <Button variant="hero" asChild>
-              <Link to="/register">Get Started</Link>
-            </Button>
+            {!isLoading && user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    {user.email?.split("@")[0]}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate(getDashboardPath())}>
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : !isLoading ? (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button variant="hero" asChild>
+                  <Link to="/register">Get Started</Link>
+                </Button>
+              </>
+            ) : null}
           </div>
 
           {/* Mobile Menu Button */}
@@ -98,12 +142,25 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="flex flex-col gap-2 mt-4 px-4">
-                <Button variant="outline" asChild className="w-full">
-                  <Link to="/login">Login</Link>
-                </Button>
-                <Button variant="hero" asChild className="w-full">
-                  <Link to="/register">Get Started</Link>
-                </Button>
+                {!isLoading && user ? (
+                  <>
+                    <Button variant="outline" className="w-full" onClick={() => { navigate(getDashboardPath()); setIsOpen(false); }}>
+                      Dashboard
+                    </Button>
+                    <Button variant="ghost" className="w-full" onClick={() => { handleSignOut(); setIsOpen(false); }}>
+                      Sign Out
+                    </Button>
+                  </>
+                ) : !isLoading ? (
+                  <>
+                    <Button variant="outline" asChild className="w-full">
+                      <Link to="/login">Login</Link>
+                    </Button>
+                    <Button variant="hero" asChild className="w-full">
+                      <Link to="/register">Get Started</Link>
+                    </Button>
+                  </>
+                ) : null}
               </div>
             </div>
           </div>
