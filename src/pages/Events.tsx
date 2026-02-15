@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { Calendar, Clock, ExternalLink, MapPin } from "lucide-react";
+import { Calendar, Clock } from "lucide-react";
 import { format } from "date-fns";
 
 const Events = () => {
@@ -30,9 +30,7 @@ const Events = () => {
     (e) => new Date(e.event_date) < new Date()
   );
 
-  const handleRegister = (formLink?: string | null) => {
-    window.open(formLink || "https://forms.google.com", "_blank");
-  };
+  // removed handleRegister - now using detail pages
 
   return (
     <div className="min-h-screen bg-background">
@@ -88,67 +86,61 @@ const Events = () => {
             ) : (
               <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
                 {upcomingEvents?.map((event, index) => (
-                  <motion.div
+                  <Link
                     key={event.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
-                    className="group bg-card rounded-2xl overflow-hidden shadow-soft hover:shadow-medium transition-all duration-300 border border-border"
+                    to={`/events/${event.id}`}
                   >
-                    {/* Banner */}
-                    <div className="aspect-video bg-gradient-hero overflow-hidden relative">
-                      {event.banner_url ? (
-                        <img
-                          src={event.banner_url}
-                          alt={event.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Calendar className="w-16 h-16 text-primary-foreground/50" />
-                        </div>
-                      )}
-                      <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-sm rounded-lg p-3 text-center">
-                        <div className="text-2xl font-bold text-primary">
-                          {format(new Date(event.event_date), "d")}
-                        </div>
-                        <div className="text-xs text-muted-foreground uppercase">
-                          {format(new Date(event.event_date), "MMM")}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-6">
-                      {/* Meta */}
-                      <div className="flex flex-wrap items-center gap-4 mb-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-primary" />
-                          {format(new Date(event.event_date), "EEEE, MMMM d, yyyy")}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-primary" />
-                          {format(new Date(event.event_date), "h:mm a")}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                      className="group bg-card rounded-2xl overflow-hidden shadow-soft hover:shadow-medium transition-all duration-300 border border-border"
+                    >
+                      {/* Banner */}
+                      <div className="aspect-video bg-gradient-hero overflow-hidden relative">
+                        {event.banner_url ? (
+                          <img
+                            src={event.banner_url}
+                            alt={event.name}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Calendar className="w-16 h-16 text-primary-foreground/50" />
+                          </div>
+                        )}
+                        <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-sm rounded-lg p-3 text-center">
+                          <div className="text-2xl font-bold text-primary">
+                            {format(new Date(event.event_date), "d")}
+                          </div>
+                          <div className="text-xs text-muted-foreground uppercase">
+                            {format(new Date(event.event_date), "MMM")}
+                          </div>
                         </div>
                       </div>
 
-                      <h3 className="font-serif text-xl font-bold text-card-foreground mb-2 group-hover:text-primary transition-colors">
-                        {event.name}
-                      </h3>
-                      <p className="text-muted-foreground text-sm mb-6 line-clamp-3">
-                        {event.description}
-                      </p>
+                      <div className="p-6">
+                        <div className="flex flex-wrap items-center gap-4 mb-4 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-primary" />
+                            {format(new Date(event.event_date), "EEEE, MMMM d, yyyy")}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-primary" />
+                            {format(new Date(event.event_date), "h:mm a")}
+                          </div>
+                        </div>
 
-                      <Button
-                        variant="gold"
-                        className="w-full"
-                        onClick={() => handleRegister(event.google_form_link)}
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        Register Now - Free
-                      </Button>
-                    </div>
-                  </motion.div>
+                        <h3 className="font-serif text-xl font-bold text-card-foreground mb-2 group-hover:text-primary transition-colors">
+                          {event.name}
+                        </h3>
+                        <p className="text-muted-foreground text-sm line-clamp-3">
+                          {event.description}
+                        </p>
+                      </div>
+                    </motion.div>
+                  </Link>
                 ))}
               </div>
             )}
@@ -164,22 +156,23 @@ const Events = () => {
               </h2>
               <div className="grid md:grid-cols-3 gap-6">
                 {pastEvents.map((event, index) => (
-                  <motion.div
-                    key={event.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
-                    className="bg-card rounded-xl p-4 border border-border opacity-70"
-                  >
-                    <div className="flex items-center gap-3 mb-2 text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      {format(new Date(event.event_date), "MMM d, yyyy")}
-                    </div>
-                    <h4 className="font-semibold text-card-foreground">
-                      {event.name}
-                    </h4>
-                  </motion.div>
+                  <Link key={event.id} to={`/events/${event.id}`}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                      className="bg-card rounded-xl p-4 border border-border opacity-70 hover:opacity-100 transition-opacity"
+                    >
+                      <div className="flex items-center gap-3 mb-2 text-sm text-muted-foreground">
+                        <Calendar className="w-4 h-4" />
+                        {format(new Date(event.event_date), "MMM d, yyyy")}
+                      </div>
+                      <h4 className="font-semibold text-card-foreground">
+                        {event.name}
+                      </h4>
+                    </motion.div>
+                  </Link>
                 ))}
               </div>
             </div>
