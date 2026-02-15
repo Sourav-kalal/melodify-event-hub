@@ -148,9 +148,6 @@ const Courses = () => {
                     level={course.level}
                     upiPrice={course.upi_price ? Number(course.upi_price) : undefined}
                     imageUrl={course.image_url || undefined}
-                    whatsappNumber={course.whatsapp_number || undefined}
-                    googleFormLink={course.google_form_link || undefined}
-                    globalWhatsappNumber={settings?.global_whatsapp_number}
                     index={index}
                   />
                 ))}

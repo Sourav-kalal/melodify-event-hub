@@ -16,31 +16,15 @@ interface CourseCardProps {
 }
 
 export function CourseCard({
+  id,
   title,
   description,
   level,
   upiPrice,
   imageUrl,
-  whatsappNumber,
-  googleFormLink,
-  globalWhatsappNumber,
   index = 0,
 }: CourseCardProps) {
   const image = imageUrl || getCourseImage(title);
-  const whatsapp = whatsappNumber || globalWhatsappNumber || "+919876543210";
-  const formLink = googleFormLink || "https://forms.google.com";
-
-  const handleWhatsApp = () => {
-    const message = encodeURIComponent(
-      `Hi, I'm interested in the ${title} course. Please share details.`
-    );
-    const phone = whatsapp.replace(/[^0-9]/g, "");
-    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
-  };
-
-  const handleJoinNow = () => {
-    window.open(formLink, "_blank");
-  };
 
   const getLevelColor = (level: string) => {
     switch (level) {
