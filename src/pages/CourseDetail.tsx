@@ -223,7 +223,7 @@ const CourseDetail = () => {
                           Chat on WhatsApp
                         </Button>
 
-                        <EnrollmentFormDialog courseId={course.id} courseTitle={course.title}>
+                        <EnrollmentFormDialog courseId={course.id} courseTitle={course.title} coursePrice={course.upi_price ? Number(course.upi_price) : null}>
                           <Button variant="hero" size="lg" className="w-full">
                             <CreditCard className="w-5 h-5" />
                             Join Now — Apply
