@@ -5,7 +5,8 @@ import { Music, Eye, EyeOff, Loader2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
+import { authApi } from "@/integrations/backend/api/auth";
+import { AppRole } from "@/integrations/backend/types";
 import { toast } from "sonner";
 
 const Register = () => {
@@ -21,30 +22,41 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const response = await authApi.register({
         email: email.trim(),
         password,
-        options: {
-          data: { full_name: fullName.trim() },
-          emailRedirectTo: window.location.origin,
-        },
+        roles: [AppRole.STUDENT],
       });
 
-      if (error) throw error;
+      if (response.accessToken) {
+        // Set the token in the API client and localStorage
+        authApi.setToken(response.accessToken);
 
-      if (data.user) {
-        const { error: roleError } = await supabase.from("user_roles").insert({
-          user_id: data.user.id,
-          role: "student",
-        });
+        // Decode token to get user info
+        const base64Url = response.accessToken.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        const decoded = JSON.parse(jsonPayload);
+        
+        // Store user info
+        localStorage.setItem('user', JSON.stringify({ 
+          id: decoded.sub, 
+          email: decoded.email,
+          fullName: fullName.trim()
+        }));
 
-        if (roleError) throw roleError;
-
-        toast.success("Account created successfully!");
+        toast.success("Account created successfully! Welcome aboard!");
         navigate("/student");
       }
     } catch (error: any) {
-      toast.error(error.message || "Registration failed");
+      console.error("Registration error:", error);
+      const errorMessage = error.response?.data?.message || error.message || "Registration failed";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

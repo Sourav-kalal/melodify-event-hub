@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CourseCard } from "@/components/courses/CourseCard";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useCourses } from "@/hooks/useCoursesApi";
+import { useSiteSettings } from "@/hooks/useSiteSettingsApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -20,32 +20,14 @@ const Courses = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [levelFilter, setLevelFilter] = useState("all");
 
-  const { data: courses, isLoading } = useQuery({
-    queryKey: ["courses"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("courses")
-        .select("*")
-        .eq("is_active", true)
-        .order("created_at", { ascending: true });
+  const { data: courses, isLoading } = useCourses();
 
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: settings } = useQuery({
-    queryKey: ["site-settings"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("site_settings").select("*");
-
-      if (error) throw error;
-      return data?.reduce((acc, item) => {
-        acc[item.setting_key] = item.setting_value;
-        return acc;
-      }, {} as Record<string, string>);
-    },
-  });
+  const { data: settingsArray } = useSiteSettings();
+  
+  const settings = settingsArray?.reduce((acc, item) => {
+    acc[item.settingKey] = item.settingValue;
+    return acc;
+  }, {} as Record<string, string>) || {};
 
   const filteredCourses = courses?.filter((course) => {
     const matchesSearch =

@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useEvent } from "@/hooks/useEventsApi";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -21,19 +20,7 @@ import {
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { data: event, isLoading } = useQuery({
-    queryKey: ["event", id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .eq("id", id!)
-        .single();
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!id,
-  });
+  const { data: event, isLoading } = useEvent(id || "");
 
   const handleWhatsApp = () => {
     const phone = "918660046713";
@@ -55,7 +42,7 @@ const EventDetail = () => {
     }
   };
 
-  const isPast = event ? new Date(event.event_date) < new Date() : false;
+  const isPast = event ? new Date(event.eventDate) < new Date() : false;
 
   return (
     <div className="min-h-screen bg-background">
@@ -82,9 +69,9 @@ const EventDetail = () => {
           <>
             {/* Hero Banner */}
             <section className="relative h-[40vh] md:h-[50vh] overflow-hidden">
-              {event.banner_url ? (
+              {event.bannerUrl ? (
                 <img
-                  src={event.banner_url}
+                  src={event.bannerUrl}
                   alt={event.name}
                   className="w-full h-full object-cover"
                 />
@@ -119,11 +106,11 @@ const EventDetail = () => {
                     <div className="flex flex-wrap items-center gap-4 text-secondary-foreground/70">
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-accent" />
-                        {format(new Date(event.event_date), "EEEE, MMMM d, yyyy")}
+                        {format(new Date(event.eventDate), "EEEE, MMMM d, yyyy")}
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-accent" />
-                        {format(new Date(event.event_date), "h:mm a")}
+                        {format(new Date(event.eventDate), "h:mm a")}
                       </div>
                     </div>
                   </motion.div>
@@ -156,14 +143,14 @@ const EventDetail = () => {
                       <div className="bg-card rounded-xl border border-border p-5">
                         <Calendar className="w-6 h-6 text-primary mb-2" />
                         <div className="font-bold text-foreground">
-                          {format(new Date(event.event_date), "MMM d, yyyy")}
+                          {format(new Date(event.eventDate), "MMM d, yyyy")}
                         </div>
                         <div className="text-muted-foreground text-sm">Event Date</div>
                       </div>
                       <div className="bg-card rounded-xl border border-border p-5">
                         <Clock className="w-6 h-6 text-primary mb-2" />
                         <div className="font-bold text-foreground">
-                          {format(new Date(event.event_date), "h:mm a")}
+                          {format(new Date(event.eventDate), "h:mm a")}
                         </div>
                         <div className="text-muted-foreground text-sm">Event Time</div>
                       </div>
@@ -184,12 +171,12 @@ const EventDetail = () => {
 
                       {!isPast && (
                         <div className="space-y-3">
-                          {event.google_form_link && (
+                          {event.googleFormLink && (
                             <Button
                               variant="gold"
                               size="lg"
                               className="w-full"
-                              onClick={() => window.open(event.google_form_link!, "_blank")}
+                              onClick={() => window.open(event.googleFormLink!, "_blank")}
                             >
                               <ExternalLink className="w-5 h-5" />
                               Register Now — Free

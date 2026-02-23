@@ -2,32 +2,19 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useEvents } from "@/hooks/useEventsApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, Clock } from "lucide-react";
 import { format } from "date-fns";
 
 const Events = () => {
-  const { data: events, isLoading } = useQuery({
-    queryKey: ["events"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("events")
-        .select("*")
-        .eq("is_active", true)
-        .order("event_date", { ascending: true });
-
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { data: events, isLoading } = useEvents();
 
   const upcomingEvents = events?.filter(
-    (e) => new Date(e.event_date) >= new Date()
+    (e) => new Date(e.eventDate) >= new Date()
   );
   const pastEvents = events?.filter(
-    (e) => new Date(e.event_date) < new Date()
+    (e) => new Date(e.eventDate) < new Date()
   );
 
   // removed handleRegister - now using detail pages
@@ -99,9 +86,9 @@ const Events = () => {
                     >
                       {/* Banner */}
                       <div className="aspect-video bg-gradient-hero overflow-hidden relative">
-                        {event.banner_url ? (
+                        {event.bannerUrl ? (
                           <img
-                            src={event.banner_url}
+                            src={event.bannerUrl}
                             alt={event.name}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
@@ -112,10 +99,10 @@ const Events = () => {
                         )}
                         <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-sm rounded-lg p-3 text-center">
                           <div className="text-2xl font-bold text-primary">
-                            {format(new Date(event.event_date), "d")}
+                            {format(new Date(event.eventDate), "d")}
                           </div>
                           <div className="text-xs text-muted-foreground uppercase">
-                            {format(new Date(event.event_date), "MMM")}
+                            {format(new Date(event.eventDate), "MMM")}
                           </div>
                         </div>
                       </div>
@@ -124,11 +111,11 @@ const Events = () => {
                         <div className="flex flex-wrap items-center gap-4 mb-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4 text-primary" />
-                            {format(new Date(event.event_date), "EEEE, MMMM d, yyyy")}
+                            {format(new Date(event.eventDate), "EEEE, MMMM d, yyyy")}
                           </div>
                           <div className="flex items-center gap-2">
                             <Clock className="w-4 h-4 text-primary" />
-                            {format(new Date(event.event_date), "h:mm a")}
+                            {format(new Date(event.eventDate), "h:mm a")}
                           </div>
                         </div>
 
@@ -166,7 +153,7 @@ const Events = () => {
                     >
                       <div className="flex items-center gap-3 mb-2 text-sm text-muted-foreground">
                         <Calendar className="w-4 h-4" />
-                        {format(new Date(event.event_date), "MMM d, yyyy")}
+                        {format(new Date(event.eventDate), "MMM d, yyyy")}
                       </div>
                       <h4 className="font-semibold text-card-foreground">
                         {event.name}

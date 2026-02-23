@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useCourses, useCreateCourse, useUpdateCourse, useDeleteCourse, useToggleCourseActive } from "@/hooks/useCoursesApi";
 import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,95 +25,82 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getCourseImage } from "@/lib/courseImages";
+import { CourseLevel } from "@/integrations/backend/types";
 
 const AdminCourses = () => {
-  const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<any>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    level: "Beginner",
-    upi_price: "",
-    google_form_link: "",
-    whatsapp_number: "",
+    level: CourseLevel.BEGINNER,
+    upiPrice: "",
+    googleFormLink: "",
+    whatsappNumber: "",
   });
 
-  const { data: courses, isLoading } = useQuery({
-    queryKey: ["admin-all-courses"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("courses")
-        .select("*")
-        .order("created_at", { ascending: true });
-      if (error) throw error;
-      return data;
-    },
-  });
+  const { data: courses, isLoading } = useCourses();
+  const createCourse = useCreateCourse();
+  const updateCourse = useUpdateCourse();
+  const deleteCourse = useDeleteCourse();
+  const toggleActive = useToggleCourseActive();
 
-  const toggleMutation = useMutation({
-    mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
-      const { error } = await supabase
-        .from("courses")
-        .update({ is_active: !is_active })
-        .eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-all-courses"] });
+  const handleToggleActive = async (id: string, isActive: boolean) => {
+    try {
+      await toggleActive.mutateAsync({ id, isActive: !isActive });
       toast.success("Course status updated");
-    },
-    onError: () => {
+    } catch (error: any) {
+      console.error("Error:", error);
       toast.error("Failed to update course status");
-    },
-  });
+    }
+  };
 
-  const saveMutation = useMutation({
-    mutationFn: async (data: any) => {
+  const handleSave = async () => {
+    try {
+      const courseData = {
+        ...formData,
+        upiPrice: formData.upiPrice ? Number(formData.upiPrice) : undefined,
+        isActive: editingCourse?.isActive ?? true,
+      };
+
       if (editingCourse) {
-        const { error } = await supabase
-          .from("courses")
-          .update(data)
-          .eq("id", editingCourse.id);
-        if (error) throw error;
+        await updateCourse.mutateAsync({
+          id: editingCourse.id,
+          course: courseData,
+        });
+        toast.success("Course updated successfully");
       } else {
-        const { error } = await supabase.from("courses").insert(data);
-        if (error) throw error;
+        await createCourse.mutateAsync(courseData);
+        toast.success("Course created successfully");
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-all-courses"] });
-      toast.success(editingCourse ? "Course updated" : "Course created");
       setIsDialogOpen(false);
       resetForm();
-    },
-    onError: () => {
+    } catch (error: any) {
+      console.error("Error:", error);
       toast.error("Failed to save course");
-    },
-  });
+    }
+  };
 
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("courses").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-all-courses"] });
-      toast.success("Course deleted");
-    },
-    onError: () => {
-      toast.error("Failed to delete course");
-    },
-  });
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this course?")) {
+      try {
+        await deleteCourse.mutateAsync(id);
+        toast.success("Course deleted");
+      } catch (error: any) {
+        console.error("Error:", error);
+        toast.error("Failed to delete course");
+      }
+    }
+  };
 
   const resetForm = () => {
     setFormData({
       title: "",
       description: "",
-      level: "Beginner",
-      upi_price: "",
-      google_form_link: "",
-      whatsapp_number: "",
+      level: CourseLevel.BEGINNER,
+      upiPrice: "",
+      googleFormLink: "",
+      whatsappNumber: "",
     });
     setEditingCourse(null);
   };
@@ -125,23 +111,16 @@ const AdminCourses = () => {
       title: course.title,
       description: course.description,
       level: course.level,
-      upi_price: course.upi_price?.toString() || "",
-      google_form_link: course.google_form_link || "",
-      whatsapp_number: course.whatsapp_number || "",
+      upiPrice: course.upiPrice?.toString() || "",
+      googleFormLink: course.googleFormLink || "",
+      whatsappNumber: course.whatsappNumber || "",
     });
     setIsDialogOpen(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    saveMutation.mutate({
-      title: formData.title,
-      description: formData.description,
-      level: formData.level,
-      upi_price: formData.upi_price ? parseFloat(formData.upi_price) : null,
-      google_form_link: formData.google_form_link || null,
-      whatsapp_number: formData.whatsapp_number || null,
-    });
+    handleSave();
   };
 
   return (
@@ -193,7 +172,7 @@ const AdminCourses = () => {
                     <Label htmlFor="level">Level</Label>
                     <Select
                       value={formData.level}
-                      onValueChange={(value) => setFormData({ ...formData, level: value })}
+                      onValueChange={(value) => setFormData({ ...formData, level: value as CourseLevel })}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -210,8 +189,8 @@ const AdminCourses = () => {
                     <Input
                       id="price"
                       type="number"
-                      value={formData.upi_price}
-                      onChange={(e) => setFormData({ ...formData, upi_price: e.target.value })}
+                      value={formData.upiPrice}
+                      onChange={(e) => setFormData({ ...formData, upiPrice: e.target.value })}
                     />
                   </div>
                 </div>
@@ -220,16 +199,16 @@ const AdminCourses = () => {
                   <Input
                     id="formLink"
                     type="url"
-                    value={formData.google_form_link}
-                    onChange={(e) => setFormData({ ...formData, google_form_link: e.target.value })}
+                    value={formData.googleFormLink}
+                    onChange={(e) => setFormData({ ...formData, googleFormLink: e.target.value })}
                   />
                 </div>
                 <div>
                   <Label htmlFor="whatsapp">WhatsApp Number (optional override)</Label>
                   <Input
                     id="whatsapp"
-                    value={formData.whatsapp_number}
-                    onChange={(e) => setFormData({ ...formData, whatsapp_number: e.target.value })}
+                    value={formData.whatsappNumber}
+                    onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
                     placeholder="+91..."
                   />
                 </div>
@@ -272,9 +251,9 @@ const AdminCourses = () => {
                       {course.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </div>
-                  {course.upi_price && (
+                  {course.upiPrice && (
                     <p className="text-primary font-semibold mb-3">
-                      ₹{Number(course.upi_price).toLocaleString("en-IN")}
+                      ₹{Number(course.upiPrice).toLocaleString("en-IN")}
                     </p>
                   )}
                   <div className="flex gap-2">
@@ -290,7 +269,7 @@ const AdminCourses = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => toggleMutation.mutate({ id: course.id, is_active: course.is_active })}
+                      onClick={() => handleToggleActive(course.id, course.isActive)}
                     >
                       {course.is_active ? (
                         <ToggleRight className="w-5 h-5 text-green-600" />
@@ -304,7 +283,7 @@ const AdminCourses = () => {
                       className="text-destructive hover:text-destructive"
                       onClick={() => {
                         if (confirm("Delete this course?")) {
-                          deleteMutation.mutate(course.id);
+                          handleDelete(course.id);
                         }
                       }}
                     >

@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useCourse } from "@/hooks/useCoursesApi";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -24,19 +23,7 @@ import {
 const CourseDetail = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { data: course, isLoading } = useQuery({
-    queryKey: ["course", id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("courses")
-        .select("*")
-        .eq("id", id!)
-        .single();
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!id,
-  });
+  const { data: course, isLoading } = useCourse(id || "");
 
   const handleWhatsApp = () => {
     const phone = "918660046713";

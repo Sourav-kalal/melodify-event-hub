@@ -1,65 +1,66 @@
 import { useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { authApi } from "@/integrations/backend/api/auth";
+import { AppRole } from "@/integrations/backend/types";
 
-type AppRole = "admin" | "instructor" | "student" | null;
+interface DecodedToken {
+  sub: string;
+  email: string;
+  roles: string[];
+  iat: number;
+  exp: number;
+}
+
+interface AuthUser {
+  id: string;
+  email: string;
+}
+
+// Simple JWT decoder (you can also use jwt-decode package)
+function decodeToken(token: string): DecodedToken | null {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error("Failed to decode token:", error);
+    return null;
+  }
+}
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<AppRole>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [role, setRole] = useState<AppRole | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null);
+    // Check for existing token on mount
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      const decoded = decodeToken(token);
+      if (decoded) {
+        setUser({
+          id: decoded.sub,
+          email: decoded.email,
+        });
         
-        if (session?.user) {
-          // Defer role fetch to avoid blocking
-          setTimeout(async () => {
-            const { data } = await supabase
-              .from("user_roles")
-              .select("role")
-              .eq("user_id", session.user.id)
-              .maybeSingle();
-            
-            setRole(data?.role as AppRole ?? null);
-          }, 0);
-        } else {
-          setRole(null);
-        }
-        
-        setIsLoading(false);
-      }
-    );
-
-    // THEN get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", session.user.id)
-          .maybeSingle()
-          .then(({ data }) => {
-            setRole(data?.role as AppRole ?? null);
-            setIsLoading(false);
-          });
+        // Set first role as the primary role
+        const primaryRole = (decoded.roles?.[0] as AppRole) || null;
+        setRole(primaryRole);
       } else {
-        setIsLoading(false);
+        authApi.logout();
       }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    }
+    setIsLoading(false);
   }, []);
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
+  const logout = () => {
+    authApi.logout();
     setUser(null);
     setRole(null);
   };
@@ -69,9 +70,9 @@ export function useAuth() {
     role,
     isLoading,
     isAuthenticated: !!user,
-    isAdmin: role === "admin",
-    isInstructor: role === "instructor",
-    isStudent: role === "student",
-    signOut,
+    isAdmin: role === AppRole.ADMIN,
+    isInstructor: role === AppRole.INSTRUCTOR,
+    isStudent: role === AppRole.STUDENT,
+    logout,
   };
 }

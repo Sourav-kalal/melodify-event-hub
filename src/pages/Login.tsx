@@ -5,7 +5,7 @@ import { Music, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
+import { authApi } from "@/integrations/backend/api/auth";
 import { toast } from "sonner";
 
 const Login = () => {
@@ -20,25 +20,37 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const response = await authApi.login({
         email: email.trim(),
         password,
       });
 
-      if (error) throw error;
+      if (response.accessToken) {
+        // Set the token in the API client and localStorage
+        authApi.setToken(response.accessToken);
 
-      if (data.user) {
-        // Get user role
-        const { data: roleData } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", data.user.id)
-          .maybeSingle();
+        // Decode token to get user info and role
+        const base64Url = response.accessToken.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        const decoded = JSON.parse(jsonPayload);
+        
+        // Store user info
+        localStorage.setItem('user', JSON.stringify({ 
+          id: decoded.sub, 
+          email: decoded.email 
+        }));
 
         toast.success("Welcome back!");
 
         // Redirect based on role
-        switch (roleData?.role) {
+        const primaryRole = decoded.roles?.[0];
+        switch (primaryRole) {
           case "admin":
             navigate("/admin");
             break;
@@ -52,7 +64,9 @@ const Login = () => {
         }
       }
     } catch (error: any) {
-      toast.error(error.message || "Login failed");
+      console.error("Login error:", error);
+      const errorMessage = error.response?.data?.message || error.message || "Login failed";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
