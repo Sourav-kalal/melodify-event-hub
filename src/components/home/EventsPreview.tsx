@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import { EditableText } from "@/components/modify/EditableText";
 
 export function EventsPreview() {
   const { data: events, isLoading } = useQuery({
@@ -24,8 +25,6 @@ export function EventsPreview() {
     },
   });
 
-  // removed handleRegister - detail pages handle this now
-
   return (
     <section className="py-20 lg:py-32 bg-background">
       <div className="container mx-auto px-4">
@@ -38,15 +37,24 @@ export function EventsPreview() {
           className="text-center mb-12"
         >
           <span className="inline-block px-4 py-1.5 bg-accent/20 text-accent-foreground rounded-full text-sm font-medium mb-6">
-            Upcoming Events
+            <EditableText
+              settingKey="events_section_badge"
+              defaultValue="Upcoming Events"
+            />
           </span>
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Join Our <span className="text-primary">Events</span>
+            <EditableText
+              settingKey="events_section_title"
+              defaultValue="Join Our Events"
+            />
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Experience the joy of music through our concerts, workshops, and
-            cultural events.
-          </p>
+          <div className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <EditableText
+              settingKey="events_section_description"
+              defaultValue="Experience the joy of music through our concerts, workshops, and cultural events."
+              as="p"
+            />
+          </div>
         </motion.div>
 
         {/* Events */}

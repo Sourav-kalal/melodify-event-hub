@@ -4,6 +4,8 @@ import { Menu, X, Music, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useSiteContent } from "@/hooks/SiteContentContext";
+import { EditableText } from "@/components/modify/EditableText";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +24,10 @@ export function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, role, isLoading, signOut } = useAuth();
+  const { getContent } = useSiteContent();
+
+  const logoUrl = getContent("site_logo_url", "");
+  const logoType = getContent("site_logo_type", "icon");
 
   const getDashboardPath = () => {
     switch (role) {
@@ -42,15 +48,27 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-lg bg-gradient-hero flex items-center justify-center shadow-soft group-hover:shadow-glow transition-shadow">
-              <Music className="w-5 h-5 text-primary-foreground" />
-            </div>
+            {logoType === "image" && logoUrl ? (
+              <div className="h-10 lg:h-12 w-auto overflow-hidden rounded-lg shadow-soft transition-all duration-300 group-hover:scale-105 active:scale-95">
+                <img src={logoUrl} alt="Logo" className="h-full w-auto object-contain" />
+              </div>
+            ) : (
+              <div className="w-10 h-10 rounded-lg bg-gradient-hero flex items-center justify-center shadow-soft group-hover:shadow-glow transition-shadow">
+                <Music className="w-5 h-5 text-primary-foreground" />
+              </div>
+            )}
             <div className="flex flex-col leading-none">
               <span className="font-serif text-xl lg:text-2xl font-bold text-accent tracking-wide uppercase">
-                Sandy's Stereo
+                <EditableText
+                  settingKey="site_name"
+                  defaultValue="Sandy's Stereo"
+                />
               </span>
               <span className="text-[9px] lg:text-[10px] font-medium text-muted-foreground tracking-widest uppercase">
-                Music Institute & Event Management
+                <EditableText
+                  settingKey="site_tagline"
+                  defaultValue="Music Institute & Event Management"
+                />
               </span>
             </div>
           </Link>

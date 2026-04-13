@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Music, Phone, Mail, MapPin } from "lucide-react";
+import { EditableText } from "@/components/modify/EditableText";
 
 export function Footer() {
   return (
@@ -14,17 +15,27 @@ export function Footer() {
               </div>
               <div className="flex flex-col leading-none">
                 <span className="font-serif text-xl font-bold text-accent tracking-wide uppercase">
-                  Sandy's Stereo
+                  <EditableText
+                    settingKey="site_name"
+                    defaultValue="Sandy's Stereo"
+                  />
                 </span>
                 <span className="text-[9px] font-medium text-secondary-foreground/50 tracking-widest uppercase">
-                  Music Institute & Event Management
+                  <EditableText
+                    settingKey="site_tagline"
+                    defaultValue="Music Institute & Event Management"
+                  />
                 </span>
               </div>
             </Link>
-            <p className="text-secondary-foreground/70 text-sm">
-              Where passion meets excellence. Learn music from the best
-              instructors in a nurturing environment.
-            </p>
+            <div className="text-secondary-foreground/70 text-sm">
+              <EditableText
+                settingKey="footer_description"
+                defaultValue="Where passion meets excellence. Learn music from the best instructors in a nurturing environment."
+                as="p"
+                multiline
+              />
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -80,16 +91,25 @@ export function Footer() {
             <h4 className="font-serif text-lg font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-secondary-foreground/70 text-sm">
-                <Phone className="w-4 h-4 text-accent" />
-                <span>+91 86600 46713</span>
+                <Phone className="w-4 h-4 text-accent shrink-0" />
+                <EditableText
+                  settingKey="footer_phone"
+                  defaultValue="+91 86600 46713"
+                />
               </li>
               <li className="flex items-center gap-2 text-secondary-foreground/70 text-sm">
-                <Mail className="w-4 h-4 text-accent" />
-                <span>info@sandysstereo.com</span>
+                <Mail className="w-4 h-4 text-accent shrink-0" />
+                <EditableText
+                  settingKey="footer_email"
+                  defaultValue="info@sandysstereo.com"
+                />
               </li>
               <li className="flex items-start gap-2 text-secondary-foreground/70 text-sm">
-                <MapPin className="w-4 h-4 text-accent mt-0.5" />
-                <span>123 Music Lane, Melody City, India</span>
+                <MapPin className="w-4 h-4 text-accent mt-0.5 shrink-0" />
+                <EditableText
+                  settingKey="footer_address"
+                  defaultValue="123 Music Lane, Melody City, India"
+                />
               </li>
             </ul>
           </div>

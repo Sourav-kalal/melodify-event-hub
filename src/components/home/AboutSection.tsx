@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Music2, Users, Award, Heart } from "lucide-react";
+import { EditableText } from "@/components/modify/EditableText";
 
 const features = [
   {
@@ -37,23 +38,33 @@ export function AboutSection() {
             transition={{ duration: 0.6 }}
           >
             <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
-              About Us
+              <EditableText
+                settingKey="about_badge"
+                defaultValue="About Us"
+              />
             </span>
             <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-              Where Passion Meets <span className="text-primary">Excellence</span>
+              <EditableText
+                settingKey="about_title"
+                defaultValue="Where Passion Meets Excellence"
+              />
             </h2>
-            <p className="text-muted-foreground text-lg mb-8">
-              Welcome to Sangeet Academy – a premier music institute dedicated to
-              nurturing musical talent. We offer comprehensive training across a
-              wide range of instruments and vocal techniques, guided by experienced
-              instructors who are passionate about sharing their knowledge.
-            </p>
-            <p className="text-muted-foreground mb-8">
-              Whether you're a beginner taking your first steps into the world of
-              music or an intermediate learner looking to refine your skills, our
-              structured curriculum and personalized approach ensure you achieve
-              your musical goals.
-            </p>
+            <div className="text-muted-foreground text-lg mb-8">
+              <EditableText
+                settingKey="about_description_1"
+                defaultValue="Welcome to Sangeet Academy – a premier music institute dedicated to nurturing musical talent. We offer comprehensive training across a wide range of instruments and vocal techniques, guided by experienced instructors who are passionate about sharing their knowledge."
+                as="p"
+                multiline
+              />
+            </div>
+            <div className="text-muted-foreground mb-8">
+              <EditableText
+                settingKey="about_description_2"
+                defaultValue="Whether you're a beginner taking your first steps into the world of music or an intermediate learner looking to refine your skills, our structured curriculum and personalized approach ensure you achieve your musical goals."
+                as="p"
+                multiline
+              />
+            </div>
 
             {/* Features Grid */}
             <div className="grid sm:grid-cols-2 gap-6">
@@ -103,11 +114,17 @@ export function AboutSection() {
                     <Music2 className="w-10 h-10 text-primary-foreground" />
                   </div>
                   <h3 className="font-serif text-2xl font-bold text-foreground mb-2">
-                    10+ Years
+                    <EditableText
+                      settingKey="about_experience_years"
+                      defaultValue="10+ Years"
+                    />
                   </h3>
-                  <p className="text-muted-foreground text-sm">
-                    Of Musical Excellence
-                  </p>
+                  <div className="text-muted-foreground text-sm">
+                    <EditableText
+                      settingKey="about_experience_subtitle"
+                      defaultValue="Of Musical Excellence"
+                    />
+                  </div>
                 </div>
               </div>
 
