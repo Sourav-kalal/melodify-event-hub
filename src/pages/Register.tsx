@@ -9,9 +9,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { checkAuth } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -90,6 +92,9 @@ const Register = () => {
 
       const { accessToken } = await registerResponse.json();
       localStorage.setItem("sandystereo_token", accessToken);
+      
+      // Update global auth state
+      checkAuth();
 
       toast.success("Account created successfully!");
       navigate("/student");

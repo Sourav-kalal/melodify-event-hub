@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EditableText } from "@/components/modify/EditableText";
 
 export function CTASection() {
   return (
@@ -21,14 +22,19 @@ export function CTASection() {
           className="text-center max-w-3xl mx-auto"
         >
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-secondary-foreground mb-6">
-            Ready to Start Your{" "}
-            <span className="text-accent">Musical Journey?</span>
+            <EditableText
+              settingKey="cta_title"
+              defaultValue="Ready to Start Your Musical Journey?"
+            />
           </h2>
-          <p className="text-secondary-foreground/70 text-lg mb-8">
-            Join hundreds of students who have discovered their passion for music
-            at Sandy's Stereo. Register today and take the first step towards
-            mastering your favorite instrument.
-          </p>
+          <div className="text-secondary-foreground/70 text-lg mb-8">
+            <EditableText
+              settingKey="cta_description"
+              defaultValue="Join hundreds of students who have discovered their passion for music at Sandy's Stereo. Register today and take the first step towards mastering your favorite instrument."
+              as="p"
+              multiline
+            />
+          </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="hero" size="xl" asChild>

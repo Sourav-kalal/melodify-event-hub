@@ -6,6 +6,7 @@ import { CourseCard } from "@/components/courses/CourseCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EditableText } from "@/components/modify/EditableText";
 
 export function CoursesPreview() {
   const { data: courses, isLoading } = useQuery({
@@ -49,15 +50,24 @@ export function CoursesPreview() {
           className="text-center mb-12"
         >
           <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
-            Our Courses
+            <EditableText
+              settingKey="courses_section_badge"
+              defaultValue="Our Courses"
+            />
           </span>
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Learn From the <span className="text-primary">Best</span>
+            <EditableText
+              settingKey="courses_section_title"
+              defaultValue="Learn From the Best"
+            />
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Explore our diverse range of music courses designed for learners at
-            every level.
-          </p>
+          <div className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <EditableText
+              settingKey="courses_section_description"
+              defaultValue="Explore our diverse range of music courses designed for learners at every level."
+              as="p"
+            />
+          </div>
         </motion.div>
 
         {/* Courses Grid */}

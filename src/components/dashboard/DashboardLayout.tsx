@@ -14,6 +14,7 @@ import {
   BarChart3,
   Video,
   GraduationCap,
+  Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -45,6 +46,7 @@ const adminNav: NavItem[] = [
   { href: "/admin/events", label: "Events", icon: Calendar },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/payments", label: "Payments", icon: CreditCard },
+  { href: "/admin/modify", label: "Modify Website", icon: Palette },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

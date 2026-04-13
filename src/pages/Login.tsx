@@ -7,9 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { checkAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -39,6 +41,9 @@ const Login = () => {
 
       const { accessToken } = await loginResponse.json();
       localStorage.setItem("sandystereo_token", accessToken);
+      
+      // Update global auth state
+      checkAuth();
 
       // Simple decode to get role for redirection
       const payload = accessToken.split('.')[1];

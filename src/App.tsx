@@ -25,13 +25,20 @@ import AdminEvents from "./pages/admin/AdminEvents";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminModify from "./pages/admin/AdminModify";
 import NotFound from "./pages/NotFound";
+import { SiteContentProvider } from "@/hooks/SiteContentContext";
+import { ThemeLoader } from "@/components/modify/ThemeLoader";
+import { AuthProvider } from "@/hooks/AuthContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <AuthProvider>
+        <SiteContentProvider>
+      <ThemeLoader />
       <Toaster />
       <Sonner />
       <BrowserRouter>
@@ -162,11 +169,21 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/modify"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminModify />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+        </SiteContentProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

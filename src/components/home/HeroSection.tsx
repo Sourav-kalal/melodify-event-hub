@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EditableText } from "@/components/modify/EditableText";
+import { EditableImage } from "@/components/modify/EditableImage";
 import heroBanner from "@/assets/hero-banner.jpg";
 
 export function HeroSection() {
@@ -9,8 +11,9 @@ export function HeroSection() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <img
-          src={heroBanner}
+        <EditableImage
+          settingKey="hero_banner_url"
+          defaultSrc={heroBanner}
           alt="Musical instruments"
           className="w-full h-full object-cover"
         />
@@ -26,30 +29,40 @@ export function HeroSection() {
             transition={{ duration: 0.6 }}
           >
             <span className="inline-block px-4 py-1.5 bg-accent/20 text-accent rounded-full text-sm font-medium mb-6">
-              🎵 Start Your Musical Journey
+              <EditableText
+                settingKey="hero_badge"
+                defaultValue="🎵 Start Your Musical Journey"
+              />
             </span>
           </motion.div>
 
-          <motion.h1
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-serif text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-secondary-foreground leading-tight mb-6"
           >
-            Discover the{" "}
-            <span className="text-gradient-gold">Magic of Music</span>
-          </motion.h1>
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-secondary-foreground leading-tight mb-6">
+              <EditableText
+                settingKey="hero_title"
+                defaultValue="Discover the Magic of Music"
+              />
+            </h1>
+          </motion.div>
 
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-secondary-foreground/80 mb-8 max-w-2xl"
           >
-            Learn from expert instructors in a nurturing environment. From
-            classical Indian music to contemporary instruments, we offer
-            comprehensive training for all skill levels.
-          </motion.p>
+            <div className="text-lg md:text-xl text-secondary-foreground/80 mb-8 max-w-2xl">
+              <EditableText
+                settingKey="hero_description"
+                defaultValue="Learn from expert instructors in a nurturing environment. From classical Indian music to contemporary instruments, we offer comprehensive training for all skill levels."
+                as="p"
+                multiline
+              />
+            </div>
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -84,16 +97,22 @@ export function HeroSection() {
             className="mt-12 grid grid-cols-3 gap-8 max-w-lg"
           >
             {[
-              { value: "500+", label: "Students" },
-              { value: "9", label: "Courses" },
-              { value: "15+", label: "Instructors" },
+              { valueKey: "hero_stat_1_value", labelKey: "hero_stat_1_label", defaultValue: "500+", defaultLabel: "Students" },
+              { valueKey: "hero_stat_2_value", labelKey: "hero_stat_2_label", defaultValue: "9", defaultLabel: "Courses" },
+              { valueKey: "hero_stat_3_value", labelKey: "hero_stat_3_label", defaultValue: "15+", defaultLabel: "Instructors" },
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="font-serif text-3xl md:text-4xl font-bold text-accent">
-                  {stat.value}
+                  <EditableText
+                    settingKey={stat.valueKey}
+                    defaultValue={stat.defaultValue}
+                  />
                 </div>
                 <div className="text-sm text-secondary-foreground/60">
-                  {stat.label}
+                  <EditableText
+                    settingKey={stat.labelKey}
+                    defaultValue={stat.defaultLabel}
+                  />
                 </div>
               </div>
             ))}
