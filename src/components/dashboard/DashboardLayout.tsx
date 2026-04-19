@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Music,
   Home,
   BookOpen,
   Calendar,
@@ -19,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import brandLogoUrl from "@/assets/sandy-stereo-logo.png";
 
 interface NavItem {
   href: string;
@@ -71,29 +71,30 @@ export function DashboardLayout({ children, title }: DashboardLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-background">
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-300 lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 w-64 border-r border-border/50 bg-card/50 backdrop-blur-2xl transform transition-transform duration-300 lg:translate-x-0",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="p-6 border-b border-border">
+          <div className="p-6 border-b border-border/50">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-gradient-hero flex items-center justify-center shadow-soft">
-                <Music className="w-5 h-5 text-primary-foreground" />
+              <div className="flex items-center py-2 shrink-0">
+                <img
+                  src={brandLogoUrl}
+                  alt="Sandy's Stereo"
+                  className="brand-logo-prominent h-12 w-auto max-w-[200px] object-contain object-left lg:h-14 lg:max-w-[220px]"
+                />
               </div>
-              <span className="font-serif text-lg font-semibold text-foreground">
-                Sangeet Academy
-              </span>
             </Link>
           </div>
 
           {/* User Info */}
-          <div className="p-4 border-b border-border">
+          <div className="p-4 border-b border-border/50">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <span className="text-primary font-semibold">
@@ -126,8 +127,8 @@ export function DashboardLayout({ children, title }: DashboardLayoutProps) {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
                   location.pathname === item.href
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "border border-primary/25 bg-primary/12 text-primary backdrop-blur-md"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                 )}
               >
                 <item.icon className="w-5 h-5" />
@@ -137,7 +138,7 @@ export function DashboardLayout({ children, title }: DashboardLayoutProps) {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-border">
+          <div className="p-4 border-t border-border/50">
             <Button
               variant="ghost"
               className="w-full justify-start text-muted-foreground hover:text-destructive"
@@ -161,7 +162,7 @@ export function DashboardLayout({ children, title }: DashboardLayoutProps) {
       {/* Main Content */}
       <div className="lg:pl-64">
         {/* Header */}
-        <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-border">
+        <header className="sticky top-0 z-30 border-b border-border/40 glass-nav">
           <div className="flex items-center justify-between h-16 px-4 lg:px-8">
             <div className="flex items-center gap-4">
               <button

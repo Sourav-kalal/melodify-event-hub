@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useSiteContent } from "@/hooks/SiteContentContext";
 import { useAuth } from "@/hooks/useAuth";
 import { Pencil, Upload, Link, X, Check, Loader2 } from "lucide-react";
@@ -26,7 +26,13 @@ export function EditableImage({
   const [activeTab, setActiveTab] = useState<"upload" | "url">("upload");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const currentSrc = getContent(settingKey, defaultSrc);
+  const storedUrl = getContent(settingKey, "");
+  const resolvedSrc = storedUrl.trim() ? storedUrl.trim() : defaultSrc;
+  const [displaySrc, setDisplaySrc] = useState(resolvedSrc);
+
+  useEffect(() => {
+    setDisplaySrc(storedUrl.trim() ? storedUrl.trim() : defaultSrc);
+  }, [storedUrl, defaultSrc]);
 
   const uploadToCloudinary = useCallback(
     async (file: File): Promise<string | null> => {
@@ -111,16 +117,27 @@ export function EditableImage({
     if (file) handleFileSelect(file);
   };
 
+  const handleImageError = () => {
+    if (displaySrc !== defaultSrc) setDisplaySrc(defaultSrc);
+  };
+
   // Normal mode — just render the image
   if (!isEditMode) {
-    return <img src={currentSrc} alt={alt} className={className} />;
+    return (
+      <img
+        src={displaySrc}
+        alt={alt}
+        className={className}
+        onError={handleImageError}
+      />
+    );
   }
 
   // Edit mode — show image with edit overlay
   return (
     <>
       <div className="relative group cursor-pointer" onClick={() => setIsModalOpen(true)}>
-        <img src={currentSrc} alt={alt} className={className} />
+        <img src={displaySrc} alt={alt} className={className} onError={handleImageError} />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-200 flex items-center justify-center">
           <span className="opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg font-medium text-sm">
             <Pencil className="w-4 h-4" />
@@ -264,9 +281,10 @@ export function EditableImage({
                 <p className="text-xs font-medium text-muted-foreground mb-2">Current Image</p>
                 <div className="rounded-lg overflow-hidden border border-border">
                   <img
-                    src={currentSrc}
+                    src={displaySrc}
                     alt="Current"
                     className="w-full h-32 object-cover"
+                    onError={handleImageError}
                   />
                 </div>
               </div>

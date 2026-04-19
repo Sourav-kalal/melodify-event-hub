@@ -121,7 +121,7 @@ const Register = () => {
               <Music className="w-5 h-5 text-primary-foreground" />
             </div>
             <div className="flex flex-col leading-none">
-              <span className="font-serif text-xl font-bold text-accent tracking-wide uppercase">
+              <span className="font-serif text-xl font-bold text-foreground tracking-wide uppercase">
                 Sandy's Stereo
               </span>
               <span className="text-[9px] font-medium text-muted-foreground tracking-widest uppercase">
