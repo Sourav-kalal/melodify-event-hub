@@ -18,6 +18,10 @@ export function HeroSection() {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-secondary/95 via-secondary/80 to-secondary/60" />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-b from-transparent via-background/75 to-background md:h-44"
+          aria-hidden
+        />
       </div>
 
       {/* Content */}
@@ -28,7 +32,7 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-block px-4 py-1.5 bg-accent/20 text-accent rounded-full text-sm font-medium mb-6">
+            <span className="inline-block px-4 py-1.5 glass-surface rounded-full text-sm font-medium text-primary mb-6">
               <EditableText
                 settingKey="hero_badge"
                 defaultValue="🎵 Start Your Musical Journey"
@@ -101,8 +105,8 @@ export function HeroSection() {
               { valueKey: "hero_stat_2_value", labelKey: "hero_stat_2_label", defaultValue: "9", defaultLabel: "Courses" },
               { valueKey: "hero_stat_3_value", labelKey: "hero_stat_3_label", defaultValue: "15+", defaultLabel: "Instructors" },
             ].map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="font-serif text-3xl md:text-4xl font-bold text-accent">
+              <div key={index} className="text-center rounded-xl glass-surface px-2 py-4">
+                <div className="font-serif text-3xl md:text-4xl font-bold text-primary">
                   <EditableText
                     settingKey={stat.valueKey}
                     defaultValue={stat.defaultValue}

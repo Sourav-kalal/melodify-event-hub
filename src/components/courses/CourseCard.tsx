@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -22,16 +23,17 @@ export function CourseCard({
   imageUrl,
   index = 0,
 }: CourseCardProps) {
-  const image = imageUrl || getCourseImage(title);
+  const fallbackImage = getCourseImage(title);
+  const [displayImage, setDisplayImage] = useState(imageUrl || fallbackImage);
 
   const getLevelColor = (level: string) => {
     switch (level) {
       case "Beginner":
-        return "bg-green-500/10 text-green-600 border-green-500/20";
+        return "bg-emerald-500/12 text-emerald-400 border-emerald-500/25";
       case "Intermediate":
-        return "bg-amber-500/10 text-amber-600 border-amber-500/20";
+        return "bg-sky-500/12 text-sky-300 border-sky-500/25";
       case "Advanced":
-        return "bg-red-500/10 text-red-600 border-red-500/20";
+        return "bg-rose-500/12 text-rose-300 border-rose-500/25";
       default:
         return "bg-primary/10 text-primary border-primary/20";
     }
@@ -51,9 +53,14 @@ export function CourseCard({
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden">
           <img
-            src={image}
+            src={displayImage}
             alt={title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            onError={() => {
+              if (displayImage !== fallbackImage) {
+                setDisplayImage(fallbackImage);
+              }
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-secondary/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <Badge

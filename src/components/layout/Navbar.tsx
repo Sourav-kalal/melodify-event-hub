@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Music, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
+import brandLogoUrl from "@/assets/sandy-stereo-logo.png";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -28,6 +29,9 @@ export function Navbar() {
 
   const logoUrl = getContent("site_logo_url", "");
   const logoType = getContent("site_logo_type", "icon");
+  const logoSrc = logoType === "image" && logoUrl ? logoUrl : brandLogoUrl;
+  const showSiteNameBesideLogo = logoType === "image" && Boolean(logoUrl);
+  const isBundledBrandLogo = logoSrc === brandLogoUrl;
 
   const getDashboardPath = () => {
     switch (role) {
@@ -43,34 +47,37 @@ export function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-nav">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="flex min-h-16 items-center justify-between py-2 lg:min-h-20 lg:py-2.5">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            {logoType === "image" && logoUrl ? (
-              <div className="h-10 lg:h-12 w-auto overflow-hidden rounded-lg shadow-soft transition-all duration-300 group-hover:scale-105 active:scale-95">
-                <img src={logoUrl} alt="Logo" className="h-full w-auto object-contain" />
-              </div>
-            ) : (
-              <div className="w-10 h-10 rounded-lg bg-gradient-hero flex items-center justify-center shadow-soft group-hover:shadow-glow transition-shadow">
-                <Music className="w-5 h-5 text-primary-foreground" />
-              </div>
-            )}
-            <div className="flex flex-col leading-none">
-              <span className="font-serif text-xl lg:text-2xl font-bold text-accent tracking-wide uppercase">
-                <EditableText
-                  settingKey="site_name"
-                  defaultValue="Sandy's Stereo"
-                />
-              </span>
-              <span className="text-[9px] lg:text-[10px] font-medium text-muted-foreground tracking-widest uppercase">
-                <EditableText
-                  settingKey="site_tagline"
-                  defaultValue="Music Institute & Event Management"
-                />
-              </span>
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="flex items-center py-1.5 pr-1 transition-all duration-300 group-hover:scale-[1.02] active:scale-[0.98]">
+              <img
+                src={logoSrc}
+                alt="Sandy's Stereo — Music Institute and Event Management"
+                className={cn(
+                  "h-12 w-auto max-h-[3.5rem] max-w-[min(280px,52vw)] object-contain object-left sm:h-[3.35rem] lg:h-16 lg:max-h-[4.25rem] lg:max-w-[min(320px,40vw)]",
+                  isBundledBrandLogo ? "brand-logo-prominent" : "drop-shadow-md",
+                )}
+              />
             </div>
+            {showSiteNameBesideLogo ? (
+              <div className="flex flex-col leading-none">
+                <span className="font-serif text-xl lg:text-2xl font-bold text-foreground tracking-wide uppercase">
+                  <EditableText
+                    settingKey="site_name"
+                    defaultValue="Sandy's Stereo"
+                  />
+                </span>
+                <span className="text-[9px] lg:text-[10px] font-medium text-muted-foreground tracking-widest uppercase">
+                  <EditableText
+                    settingKey="site_tagline"
+                    defaultValue="Music Institute & Event Management"
+                  />
+                </span>
+              </div>
+            ) : null}
           </Link>
 
           {/* Desktop Navigation */}
@@ -83,7 +90,7 @@ export function Navbar() {
                   "text-sm font-medium transition-colors hover:text-primary relative py-2",
                   location.pathname === link.href
                     ? "text-primary"
-                    : "text-muted-foreground"
+                    : "text-foreground/80 hover:text-primary"
                 )}
               >
                 {link.label}
@@ -142,7 +149,7 @@ export function Navbar() {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden py-4 border-t border-border animate-fade-up">
+          <div className="md:hidden py-4 border-t border-border/50 bg-background/65 backdrop-blur-xl animate-fade-up">
             <div className="flex flex-col gap-2">
               {navLinks.map((link) => (
                 <Link
@@ -153,7 +160,7 @@ export function Navbar() {
                     "px-4 py-3 rounded-lg text-sm font-medium transition-colors",
                     location.pathname === link.href
                       ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted"
+                      : "text-foreground/85 hover:bg-muted hover:text-foreground"
                   )}
                 >
                   {link.label}

@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EditableText } from "@/components/modify/EditableText";
+import coursesSectionBg from "@/assets/courses-section-bg.png";
 
 export function CoursesPreview() {
   const { data: courses, isLoading } = useQuery({
@@ -23,45 +24,49 @@ export function CoursesPreview() {
     },
   });
 
-  const { data: settings } = useQuery({
-    queryKey: ["site-settings"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("site_settings")
-        .select("*");
-      
-      if (error) throw error;
-      return data?.reduce((acc, item) => {
-        acc[item.setting_key] = item.setting_value;
-        return acc;
-      }, {} as Record<string, string>);
-    },
-  });
-
   return (
-    <section className="py-20 lg:py-32 bg-muted/50">
-      <div className="container mx-auto px-4">
+    <section className="relative overflow-hidden py-20 lg:py-32">
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <img
+          src={coursesSectionBg}
+          alt=""
+          className="h-full w-full scale-[1.06] object-cover object-[center_45%] brightness-[0.58] contrast-[0.92] saturate-[0.82] blur-[2.5px]"
+        />
+        {/* Heavily toned down; warm tint kept subtle */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/88 via-black/68 to-black/86" />
+        <div className="absolute inset-0 bg-gradient-to-b from-secondary/48 via-secondary/32 to-secondary/40" />
+        <div
+          className="absolute inset-0 bg-[radial-gradient(ellipse_95%_72%_at_50%_48%,transparent_0%,rgba(0,0,0,0.52)_100%)]"
+          aria-hidden
+        />
+        {/* Blend from About — continue page background into this image */}
+        <div className="absolute inset-x-0 top-0 z-[2] h-32 bg-gradient-to-b from-background via-background/55 to-transparent md:h-44" />
+        {/* Blend into Events — fade out through page background */}
+        <div className="absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-b from-transparent via-background/75 to-background md:h-44" />
+      </div>
+      <div className="relative z-10 container mx-auto px-4">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="mb-12 text-center"
         >
-          <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+          <span className="mb-6 inline-block rounded-full px-4 py-1.5 text-sm font-semibold text-foreground [text-shadow:0_1px_10px_rgba(0,0,0,0.8)] glass-surface">
             <EditableText
               settingKey="courses_section_badge"
               defaultValue="Our Courses"
             />
           </span>
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+          <h2 className="mb-4 font-serif text-3xl font-bold text-foreground [text-shadow:0_2px_24px_rgba(0,0,0,0.85)] selection:bg-foreground/25 selection:text-foreground md:text-4xl lg:text-5xl">
             <EditableText
               settingKey="courses_section_title"
               defaultValue="Learn From the Best"
+              className="selection:bg-foreground/25 selection:text-foreground"
             />
           </h2>
-          <div className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <div className="mx-auto max-w-2xl text-lg font-medium leading-relaxed text-foreground/92 [text-shadow:0_1px_14px_rgba(0,0,0,0.75)]">
             <EditableText
               settingKey="courses_section_description"
               defaultValue="Explore our diverse range of music courses designed for learners at every level."

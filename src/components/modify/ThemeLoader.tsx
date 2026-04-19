@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useSiteContent } from "@/hooks/SiteContentContext";
 
 /**
- * Loads saved theme colors and fonts on app startup.
- * This component renders nothing — it just applies CSS variables.
+ * Applies optional heading/body fonts from site settings.
+ * Theme colors always come from index.css; clears stale inline --* vars from older ThemeCustomizer sessions.
  */
 
 const FONT_MAP: Record<string, { value: string; gfont: string }> = {
@@ -35,31 +35,48 @@ function loadGoogleFont(gfont: string) {
   document.head.appendChild(link);
 }
 
+/** Inline theme vars from the admin ThemeCustomizer override :root in index.css — clear so bundled palette wins. */
+const INJECTED_THEME_VAR_KEYS = [
+  "primary",
+  "primary-foreground",
+  "secondary",
+  "secondary-foreground",
+  "accent",
+  "accent-foreground",
+  "background",
+  "foreground",
+  "card",
+  "card-foreground",
+  "popover",
+  "popover-foreground",
+  "muted",
+  "muted-foreground",
+  "border",
+  "input",
+  "ring",
+  "destructive",
+  "destructive-foreground",
+  "gradient-hero",
+  "gradient-gold",
+  "gradient-navy",
+];
+
+function clearInjectedThemeVariables() {
+  const root = document.documentElement;
+  INJECTED_THEME_VAR_KEYS.forEach((key) => root.style.removeProperty(`--${key}`));
+}
+
 export function ThemeLoader() {
   const { getContent, isLoading } = useSiteContent();
 
   useEffect(() => {
+    document.documentElement.classList.add("dark");
+    document.documentElement.style.colorScheme = "dark";
+
     if (isLoading) return;
 
-    // Apply saved colors
-    const savedColors = getContent("theme_colors", "");
-    if (savedColors) {
-      try {
-        const colors = JSON.parse(savedColors);
-        const root = document.documentElement;
-        Object.entries(colors).forEach(([key, value]) => {
-          root.style.setProperty(`--${key}`, value as string);
-        });
-        // Update gradients
-        if (colors.primary && colors.accent) {
-          root.style.setProperty("--gradient-hero", `linear-gradient(135deg, hsl(${colors.primary}) 0%, hsl(${colors.accent}) 100%)`);
-          root.style.setProperty("--gradient-gold", `linear-gradient(135deg, hsl(${colors.accent}) 0%, hsl(${colors.primary}) 100%)`);
-        }
-        if (colors.secondary) {
-          root.style.setProperty("--gradient-navy", `linear-gradient(135deg, hsl(${colors.secondary}) 0%, hsl(${colors.secondary}) 100%)`);
-        }
-      } catch {}
-    }
+    // Colors come from index.css only (API theme_colors was overriding local/neutral tokens).
+    clearInjectedThemeVariables();
 
     // Apply saved heading font
     const headingFontId = getContent("theme_heading_font", "");

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Music2, Users, Award, Heart } from "lucide-react";
 import { EditableText } from "@/components/modify/EditableText";
+import aboutSectionBg from "@/assets/about-section-bg.png";
 
 const features = [
   {
@@ -27,8 +28,27 @@ const features = [
 
 export function AboutSection() {
   return (
-    <section className="py-20 lg:py-32 bg-background">
-      <div className="container mx-auto px-4">
+    <section className="relative overflow-hidden py-20 lg:py-32">
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <img
+          src={aboutSectionBg}
+          alt=""
+          className="h-full w-full object-cover object-[center_45%] brightness-[0.64] contrast-[0.93] saturate-[0.88]"
+        />
+        {/* Tone down hotspots; heavy on the left where copy sits */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/91 via-black/66 to-black/52" />
+        <div className="absolute inset-0 bg-gradient-to-r from-secondary/68 via-secondary/48 to-secondary/36" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/46 via-transparent to-black/56" />
+        <div
+          className="absolute inset-0 bg-[radial-gradient(ellipse_75%_65%_at_88%_42%,rgba(0,0,0,0.66)_0%,transparent_68%)]"
+          aria-hidden
+        />
+        {/* Blend from hero — continue page background into this image */}
+        <div className="absolute inset-x-0 top-0 z-[2] h-32 bg-gradient-to-b from-background via-background/55 to-transparent md:h-44" />
+        {/* Fade into page background so the next section doesn’t hard-cut */}
+        <div className="absolute inset-x-0 bottom-0 z-[2] h-32 bg-gradient-to-b from-transparent via-background/75 to-background md:h-44" />
+      </div>
+      <div className="relative z-10 container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Content */}
           <motion.div
@@ -37,32 +57,27 @@ export function AboutSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+            <span className="mb-6 inline-block rounded-full px-4 py-1.5 text-sm font-semibold text-foreground [text-shadow:0_1px_10px_rgba(0,0,0,0.8)] glass-surface">
               <EditableText
                 settingKey="about_badge"
                 defaultValue="About Us"
               />
             </span>
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+            <h2 className="mb-6 font-serif text-3xl font-bold text-foreground [text-shadow:0_2px_24px_rgba(0,0,0,0.85)] md:text-4xl lg:text-5xl">
               <EditableText
                 settingKey="about_title"
                 defaultValue="Where Passion Meets Excellence"
               />
             </h2>
-            <div className="text-muted-foreground text-lg mb-8">
+            <div className="mb-8 text-lg font-medium leading-relaxed text-foreground/92 [text-shadow:0_1px_14px_rgba(0,0,0,0.75)]">
               <EditableText
-                settingKey="about_description_1"
-                defaultValue="Welcome to Sangeet Academy – a premier music institute dedicated to nurturing musical talent. We offer comprehensive training across a wide range of instruments and vocal techniques, guided by experienced instructors who are passionate about sharing their knowledge."
+                settingKey="about_description"
+                defaultValue={`Welcome to Sandy's Stereo 
+Our structured programs and small batches keep instruction personal, focused, and inspiring.
+We're here to help you build technique, confidence, and real joy in making music.`}
                 as="p"
                 multiline
-              />
-            </div>
-            <div className="text-muted-foreground mb-8">
-              <EditableText
-                settingKey="about_description_2"
-                defaultValue="Whether you're a beginner taking your first steps into the world of music or an intermediate learner looking to refine your skills, our structured curriculum and personalized approach ensure you achieve your musical goals."
-                as="p"
-                multiline
+                className="whitespace-pre-line"
               />
             </div>
 
@@ -77,14 +92,14 @@ export function AboutSection() {
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                   className="flex gap-4"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <feature.icon className="w-6 h-6 text-primary" />
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg glass-surface">
+                    <feature.icon className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground mb-1">
+                    <h4 className="mb-1 font-semibold text-foreground [text-shadow:0_1px_8px_rgba(0,0,0,0.65)]">
                       {feature.title}
                     </h4>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm font-medium text-foreground/85 [text-shadow:0_1px_10px_rgba(0,0,0,0.65)]">
                       {feature.description}
                     </p>
                   </div>
@@ -108,18 +123,18 @@ export function AboutSection() {
               <div className="absolute inset-8 rounded-full border-2 border-dashed border-accent/30 animate-spin" style={{ animationDuration: '25s', animationDirection: 'reverse' }} />
               
               {/* Center Content */}
-              <div className="absolute inset-16 rounded-full bg-card shadow-medium flex items-center justify-center">
-                <div className="text-center p-8">
-                  <div className="w-20 h-20 rounded-full bg-gradient-hero flex items-center justify-center mx-auto mb-4 shadow-glow">
-                    <Music2 className="w-10 h-10 text-primary-foreground" />
+              <div className="absolute inset-16 flex items-center justify-center rounded-full glass-surface-strong shadow-medium">
+                <div className="p-8 text-center">
+                  <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-hero shadow-glow">
+                    <Music2 className="h-10 w-10 text-primary-foreground" />
                   </div>
-                  <h3 className="font-serif text-2xl font-bold text-foreground mb-2">
+                  <h3 className="mb-2 font-serif text-2xl font-bold text-foreground">
                     <EditableText
                       settingKey="about_experience_years"
-                      defaultValue="10+ Years"
+                      defaultValue="5+ Years"
                     />
                   </h3>
-                  <div className="text-muted-foreground text-sm">
+                  <div className="text-sm font-medium text-foreground/85">
                     <EditableText
                       settingKey="about_experience_subtitle"
                       defaultValue="Of Musical Excellence"
@@ -137,7 +152,7 @@ export function AboutSection() {
               ].map((item, index) => (
                 <div
                   key={index}
-                  className={`absolute ${item.position} w-12 h-12 bg-card rounded-full shadow-soft flex items-center justify-center text-2xl animate-float`}
+                  className={`absolute ${item.position} flex h-12 w-12 items-center justify-center rounded-full glass-surface text-2xl shadow-soft animate-float`}
                   style={{ animationDelay: `${index * 0.5}s` }}
                 >
                   {item.emoji}

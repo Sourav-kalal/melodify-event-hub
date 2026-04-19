@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, Clock } from "lucide-react";
 import { format } from "date-fns";
+import eventsSectionBg from "@/assets/events-section-bg.png";
 
 const Events = () => {
   const { data: events, isLoading } = useQuery({
@@ -37,18 +38,27 @@ const Events = () => {
       <Navbar />
       <main className="pt-20">
         {/* Hero */}
-        <section className="py-16 lg:py-24 bg-gradient-navy">
-          <div className="container mx-auto px-4">
+        <section className="relative overflow-hidden py-16 lg:py-24">
+          <div className="pointer-events-none absolute inset-0" aria-hidden>
+            <img
+              src={eventsSectionBg}
+              alt=""
+              className="h-full w-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-black/45" />
+            <div className="absolute inset-0 bg-gradient-to-r from-secondary/95 via-secondary/85 to-secondary/72" />
+          </div>
+          <div className="container relative z-10 mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-center max-w-3xl mx-auto"
+              className="mx-auto max-w-3xl text-center"
             >
-              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-secondary-foreground mb-4">
-                Upcoming <span className="text-accent">Events</span>
+              <h1 className="mb-4 font-serif text-4xl font-bold text-secondary-foreground [text-shadow:0_2px_28px_rgba(0,0,0,0.9)] md:text-5xl lg:text-6xl">
+                Upcoming <span className="text-primary [text-shadow:0_2px_20px_rgba(0,0,0,0.85)]">Events</span>
               </h1>
-              <p className="text-secondary-foreground/70 text-lg">
+              <p className="text-lg font-medium leading-relaxed text-secondary-foreground/95 [text-shadow:0_1px_18px_rgba(0,0,0,0.85)]">
                 Join us for concerts, workshops, and cultural celebrations.
                 Experience the joy of music with our community.
               </p>
@@ -77,9 +87,9 @@ const Events = () => {
                   ))}
               </div>
             ) : upcomingEvents?.length === 0 ? (
-              <div className="text-center py-16 bg-card rounded-2xl border border-border">
-                <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground text-lg">
+              <div className="rounded-2xl border border-border bg-card py-16 text-center">
+                <Calendar className="mx-auto mb-4 h-12 w-12 text-primary" />
+                <p className="text-lg font-medium text-foreground">
                   No upcoming events at the moment. Check back soon!
                 </p>
               </div>
